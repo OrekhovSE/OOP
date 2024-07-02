@@ -219,6 +219,15 @@ public:
         return *this;
     }
 
+    LinkedList<Type>& operator=(const LinkedList<Type>&& list) {
+        clear();
+        head = list.getHead();
+        listSize = list.size();
+        list.head = NULL;
+        list.listSize = 0;
+        return *this;
+    }
+
     bool operator==(const LinkedList<Type>& list) {
         if (list.listSize != listSize)
             return false;
