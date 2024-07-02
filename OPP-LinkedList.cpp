@@ -1,48 +1,84 @@
 #include <iostream>
 #include <string>
 
-#include "FireShalter.h"
-#include "IceShalter.h"
-#include "Master.h"
-#include "Disciple.h"
+#include "ClassicSlotMachine.h"
+#include "Gladiator.h"
+#include "Failure.h"
+#include "Success.h"
 
 using namespace std;
 
 int main() {
-    // pattern - фабричный в классах Shalter, Culrist
+    // pattern - фабричный
 
- /*   Предметная область – аналитика жертвоприношений.Чтобы быть культистом не обязательно быть умным, 
-        достаточно иметь сильную веру, поэтому многие не могут считать и поэтому постоянно вовремя жертвоприношений совершаются ошибки
-        из - за которых приходиться начинать все сначала.Эта программа позволит избежать этих ошибок.
-        Во время жертвоприношений культисты встают в круг и передают эстафету через конкретное кол - во шагов,
-        в разных “Убежищах” разные условия передачи эстафеты,
-        также у разных культистов разный метод жертвоприношений.
-        Жертвоприношение заканчивается пока не выполняться определенные условия или не останется культистов.*/
+ /*   Предметная область – игровые автоматы. Gladiator - игровая автомат наследуемый от SlotMachine с увеличивающимся джекпотом, 
+        ClassicSlotMachine - игровая автомат наследуемый от SlotMachine в классическом варианте*/
+    srand(time(0));
+    Choice* choiceForGladiaror1 = new Failure("lost1, consolation prize = ");
+    Choice* choiceForGladiaror2 = new Failure("lost2, consolation prize = ");
+    Choice* choiceForGladiaror3 = new Failure("lost3, consolation prize = ");
+    Choice* choiceForGladiaror4 = new Failure("lost4, consolation prize = ");
+    Choice* choiceForGladiaror5 = new Success();
 
-   Cultist* c1 = new Master("vo ima matana", "master1");
-    Cultist* c2 = new Master("vo ima matana", "master2");
-    Cultist* c3 = new Master("vo ima matana", "master3");
-    Cultist* c4 = new Disciple("vo ima matana", "master4");
-    Cultist* c5 = new Disciple("vo ima matana", "master5");
-    Cultist* c6 = new Disciple("vo ima matana", "master6");
+    int bet = 100;
+    Gladiator gladiator{ 10000 };
+    gladiator.addChoice(choiceForGladiaror1);
+    gladiator.addChoice(choiceForGladiaror2);
+    gladiator.addChoice(choiceForGladiaror3);
+    gladiator.addChoice(choiceForGladiaror4);
+    gladiator.addChoice(choiceForGladiaror5);
 
-    FireShalter fire;
-    fire.addCultist(c1);
-    fire.addCultist(c3);
-    fire.addCultist(c5);
+    gladiator.play(bet);
+    gladiator.play(bet);
+    gladiator.play(bet);
+    gladiator.play(bet);
+    gladiator.play(bet);
+    gladiator.play(bet);
+
+
+    cout << "-----------------------------------" << endl;
+
+    ClassicSlotMachine classic{ 3 };
+    Choice* choiceForClassic1 = new Failure("lost1, consolation prize = ");
+    Choice* choiceForClassic2 = new Failure("lost2, consolation prize = ");
+    Choice* choiceForClassic3 = new Failure("lost3, consolation prize = ");
+    Choice* choiceForClassic4 = new Success();
+    classic.addChoice(choiceForClassic1);
+    classic.addChoice(choiceForClassic2);
+    classic.addChoice(choiceForClassic3);
+    classic.addChoice(choiceForClassic4);
+
+    classic.play(bet);
+    classic.play(bet);
+    classic.play(bet);
+    classic.play(bet);
+    classic.play(bet);
 
 
 
-    IceShalter ice;
-    ice.addCultist(c2);
-    fire.addCultist(c4);
-    fire.addCultist(c6);
-    
-    ice.sacrificing(10);
 
-    fire.sacrificing(3);
 
-    
+
+
+
+    /*cout << "-----------------------------------" << endl;
+    LinkedList<int> list;
+
+    list.insertNode(1);
+    list.insertNode(2);
+    list.insertNode(3);
+    list.insertNode(4);
+    list.printList();
+    cout << "-----------------------------------" << endl;
+    LinkedList<int> list2{ list };
+    list2.printList();
+
+    LinkedList<int>::Iterator iter = list.begin();
+    cout << *iter << endl;
+    cout << *++iter << endl;
+    cout << *++iter << endl;
+    cout << *++iter << endl;
+    cout << *++iter << endl;*/
 
     return 0;
 }

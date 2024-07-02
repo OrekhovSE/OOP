@@ -15,27 +15,41 @@ private:
 public:
     LinkedList() : head(NULL), listSize(0) {}
 
-    LinkedList(const LinkedList<Type>& list) {
-        listSize = list.listSize;
-        head = NULL;
-        Node<Type>* cur = NULL;
-        Node<Type>* other = list.head;
-        while (other != NULL) {
+    LinkedList(const LinkedList& list) {
+        if (list.head != NULL) {
+            clear();
+
+            Node<Type>* cur = new Node<Type>();
+            Node<Type>* cur2 = new Node<Type>();
             Node<Type>* newNode = new Node<Type>();
+            listSize = list.listSize;
+
+            cur = list.head;
+            newNode->data = cur->data;
             newNode->next = NULL;
-            newNode->data = other->data;
-            if (cur != NULL)
-                cur->next = newNode;
-            if (head == NULL)
-                head = newNode;
-            cur = newNode;
-            other = other->next;
+            head = newNode;
+            cur2 = head;
+
+            for (int i = 0; i < listSize - 1; i++) {
+                cur = cur->next;
+                newNode = new Node<Type>();
+                newNode->data = cur->data;
+                newNode->next = NULL;
+                cur2->next = newNode;
+                cur2 = cur2->next;
+            }
+
+            cur2->next = head;
+        } else {
+            head = NULL;
+            listSize = 0;
         }
     }
 
     LinkedList(LinkedList&& list) {
         head = list.getHead();
         listSize = list.size();
+        list.clear();
     }
     
     ~LinkedList() {
@@ -96,8 +110,8 @@ public:
     void deleteNode(int id) {
         Node<Type>* cur1 = head, * cur2 = head->next;
         int count = 0;
-        if (listSize != 0)
-        id = id % listSize - 1;
+        if (id >= listSize && id != 0)
+            id = id % listSize;
 
         if (head == NULL) {
             cout << "List empty." << endl;
@@ -107,8 +121,14 @@ public:
                 cur2 = cur2->next;
             cur2->next = head->next;
             cur1 = head->next;
-            delete head;
-            head = cur1;
+            if (head != cur1) {
+                delete head;
+                head = cur1;
+            }
+            else {
+                delete head;
+                head = NULL;
+            }
             listSize--;
         }
         else if (id > 0 && id < listSize) {
@@ -131,17 +151,18 @@ public:
 
     void clear() {
         Node<Type>* cur = head;
-        while (cur->next != head)
-            cur = cur->next;
-        cur->next = NULL;
+        if (cur != NULL) {
+            while (cur->next != head)
+                cur = cur->next;
+            cur->next = NULL;
 
-        while (head != NULL) {
-            cur = head->next;
-            delete head;
-            head = cur;
+            while (head != NULL) {
+                cur = head->next;
+                delete head;
+                head = cur;
 
+            }
         }
-     
     }
 
     int size() { 
@@ -165,20 +186,33 @@ public:
     Node<Type>* getHead() { return head; }
 
     const LinkedList<Type>& operator=(const LinkedList<Type>& list) {
-        listSize = list.listSize;
-        head = NULL;
-        Node<Type>* cur = NULL;
-        Node<Type>* other = list.head;
-        while (other != NULL) {
+        if (list.head != NULL) {
+            clear();
+            Node<Type>* cur = new Node<Type>();
+            Node<Type>* cur2 = new Node<Type>();
             Node<Type>* newNode = new Node<Type>();
+            listSize = list.listSize;
+
+            cur = list.head;
+            newNode->data = cur->data;
             newNode->next = NULL;
-            newNode->data = other->data;
-            if (cur != NULL)
-                cur->next = newNode;
-            if (head == NULL)
-                head = newNode;
-            cur = newNode;
-            other = other->next;
+            head = newNode;
+            cur2 = head;
+
+            for (int i = 0; i < listSize - 1; i++) {
+                cur = cur->next;
+                newNode = new Node<Type>();
+                newNode->data = cur->data;
+                newNode->next = NULL;
+                cur2->next = newNode;
+                cur2 = cur2->next;
+            }
+
+            cur2->next = head;
+        }
+        else {
+            head = NULL;
+            listSize = 0;
         }
 
         return *this;
@@ -187,27 +221,27 @@ public:
     bool operator==(const LinkedList<Type>& list) {
         if (list.listSize != listSize)
             return false;
-        Node<Type>* cur = list.head;
-        Node<Type>* curHead = head;
-        while (cur != NULL && cur->data == curHead->data) {
+
+        Node<Type>* cur = head;
+        Node<Type>* curHead = list.head;
+
+        if ((cur != NULL && curHead == NULL) || (cur == NULL && curHead != NULL) || cur->data != curHead->data)
+            return false;
+
+        cur = head->next;
+        curHead = list.head->next;
+        
+
+        while (cur != head && cur->data == curHead->data) {
             cur = cur->next;
             curHead = curHead->next;
         }
 
-        return cur == NULL;
+        return cur == head;
     }
 
     bool operator!=(const LinkedList<Type>& list) {
-        if (list.listSize != listSize)
-            return true;
-        Node<Type>* cur = list.head;
-        Node<Type>* curHead = head;
-        while (cur != NULL && cur->data == curHead->data) {
-            cur = cur->next;
-            curHead = curHead->next;
-        }
-
-        return !(cur == NULL);
+        return !(this == list);
     }
 
     void swap(LinkedList<Type>& list1) {
@@ -228,24 +262,20 @@ public:
         using iterator_category = std::forward_iterator_tag;
         using difference_type = std::ptrdiff_t;
         using value_type = Type;
-        using pointer = Node<Type>*;
+        using pointer = Type*;
         using reference = Type&;
 
-        Iterator(pointer ptr) : m_ptr(ptr) {}
+        Iterator(Node<Type>* ptr) : m_ptr(ptr) {}
 
         reference operator*() const { 
             return m_ptr->data; 
         }
 
         pointer operator->() { return m_ptr; }
+
         Iterator& operator++() { 
-            if (m_ptr == NULL)
-                return m_ptr;
-            else {
-                m_ptr = m_ptr->next;
-                return  m_ptr;
-            }
-               
+            m_ptr = m_ptr->next;
+            return *this;  
         }
 
         Iterator operator++(int) { 
@@ -284,7 +314,7 @@ public:
         friend bool operator>=(const Iterator& a, const Iterator& b) { return !(a < b); }
 
     private:
-        pointer m_ptr;
+        Node<Type>* m_ptr;
     };
 
     
@@ -301,6 +331,7 @@ public:
             using const_reference = value_type&;
 
             constIterator(Node<Type>* node) : curr(node) {}
+            constIterator(const constIterator& iter) : curr(iter.curr) {}
 
             const_reference operator*() const { return curr->data; }
             constIterator& operator++() { curr = curr->next; return *this; }
