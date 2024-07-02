@@ -49,7 +49,8 @@ public:
     LinkedList(LinkedList&& list) {
         head = list.getHead();
         listSize = list.size();
-        list.clear();
+        list.head = NULL;
+        list.listSize = 0;
     }
     
     ~LinkedList() {
