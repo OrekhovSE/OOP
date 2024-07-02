@@ -310,37 +310,8 @@ public:
             Iterator tmp = *this; ++(*this); return tmp; 
         }
 
-        Iterator& operator+=(difference_type offset) {
-            for (difference_type i = 0; i < offset; ++i) {
-                m_ptr = m_ptr->next;
-            }
-
-            return *this;
-        }
-
-        reference operator[](difference_type index) const {
-            pointer tmp = m_ptr;
-            for (difference_type i = 0; i < index; ++i) {
-                tmp = tmp->next;
-            }
-            return tmp->value;
-        }
-        
-        
         friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
         friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
-        friend bool operator<(const Iterator& a, const Iterator& b) {
-            pointer h = a.m_ptr;
-            pointer tmp = h->next;
-            while (tmp->next != h && tmp != b.m_ptr) {
-                tmp = tmp->next;
-            }
-            return tmp == b.m_ptr;
-        }
-        friend bool operator>(const Iterator& a, const Iterator& b) { return b < a; }
-        friend bool operator<=(const Iterator& a, const Iterator& b) { return !(b < a); }
-        friend bool operator>=(const Iterator& a, const Iterator& b) { return !(a < b); }
-
     private:
         Node<Type>* m_ptr;
     };
