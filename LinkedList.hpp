@@ -241,7 +241,25 @@ public:
     }
 
     bool operator!=(const LinkedList<Type>& list) {
-        return !(this == list);
+        if (list.listSize != listSize)
+            return false;
+
+        Node<Type>* cur = head;
+        Node<Type>* curHead = list.head;
+
+        if ((cur != NULL && curHead == NULL) || (cur == NULL && curHead != NULL) || cur->data != curHead->data)
+            return false;
+
+        cur = head->next;
+        curHead = list.head->next;
+
+
+        while (cur != head && cur->data == curHead->data) {
+            cur = cur->next;
+            curHead = curHead->next;
+        }
+
+        return cur != head;
     }
 
     void swap(LinkedList<Type>& list1) {
